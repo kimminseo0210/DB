@@ -64,6 +64,14 @@ $result_department = mysqli_query($con, $sql_department);
 <body>
 <h1>회원 가입</h1>
 <form method="post" action="regist_insert.php">
+
+    <!-- 역할 선택 라디오 버튼 추가 -->
+    <label for="role">역할:</label>
+    <input type="radio" id="student" name="role" value="student" required>
+    <label for="student">학생</label>
+    <input type="radio" id="professor" name="role" value="professor" required>
+    <label for="professor">교수</label><br>
+
     <label for="userName">이름:</label>
     <input type="text" id="userName" name="userName" required><br>
 
@@ -82,9 +90,9 @@ $result_department = mysqli_query($con, $sql_department);
         <?php
         // 학과 목록 반복
         while ($row_department = mysqli_fetch_array($result_department)) {
+            $deptID = $row_department['DepartmentID'];
             $dept = $row_department['College'];
-            $selected = "";
-            echo "<option value='$dept' $selected>$dept</option>";
+            echo "<option value='$deptID'>$dept</option>";
         }
         ?>
     </select><br>
@@ -92,7 +100,7 @@ $result_department = mysqli_query($con, $sql_department);
     <br>
     <!-- 회원가입 버튼 -->
     <input type="submit" id="signupButton" name="login" value="회원가입" disabled>
-    <input type="button" value="취소" onclick="window.location.href='../../main.php'">
+    <input type="button" value="취소" onclick="window.location.href='..main.php'">
 </form>
 </body>
 </html>

@@ -1,0 +1,106 @@
+CREATE TABLE `assignment` (
+  `Week` int NOT NULL,
+  `AssignmentName` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `StartDate` date NOT NULL,
+  `EndDate` date NOT NULL,
+  `Content` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  PRIMARY KEY (`Week`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci
+
+CREATE TABLE `assignmentcomment` (
+  `Week` int NOT NULL,
+  `CommentDate` date NOT NULL,
+  `CommentTime` time NOT NULL,
+  `StudentName` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
+  KEY `Week` (`Week`),
+  CONSTRAINT `assignmentcomment_ibfk_1` FOREIGN KEY (`Week`) REFERENCES `assignment` (`Week`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci
+
+CREATE TABLE `classroom` (
+  `ClassroomID` int NOT NULL,
+  `ProfessorID` int NOT NULL,
+  `Purpose` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
+  PRIMARY KEY (`ClassroomID`),
+  KEY `ProfessorID` (`ProfessorID`),
+  CONSTRAINT `classroom_ibfk_1` FOREIGN KEY (`ProfessorID`) REFERENCES `professor` (`ProfessorID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci
+
+CREATE TABLE `classroomreservation` (
+  `ClassroomID` int NOT NULL,
+  `ReservationTime` datetime NOT NULL,
+  `StudentID` int NOT NULL,
+  PRIMARY KEY (`ClassroomID`,`ReservationTime`),
+  KEY `StudentID` (`StudentID`),
+  CONSTRAINT `classroomreservation_ibfk_1` FOREIGN KEY (`ClassroomID`) REFERENCES `classroom` (`ClassroomID`),
+  CONSTRAINT `classroomreservation_ibfk_2` FOREIGN KEY (`StudentID`) REFERENCES `student` (`StudentID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci
+
+CREATE TABLE `classroomschedule` (
+  `ClassroomID` int NOT NULL,
+  `Schedule` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
+  PRIMARY KEY (`ClassroomID`,`Schedule`),
+  CONSTRAINT `classroomschedule_ibfk_1` FOREIGN KEY (`ClassroomID`) REFERENCES `classroom` (`ClassroomID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci
+
+CREATE TABLE `deleted_user` (
+  `userID` varchar(50) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `deleted_at` datetime NOT NULL,
+  PRIMARY KEY (`userID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci
+
+CREATE TABLE `department` (
+  `DepartmentID` int NOT NULL AUTO_INCREMENT,
+  `College` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
+  PRIMARY KEY (`DepartmentID`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci
+
+CREATE TABLE `lab` (
+  `LabID` int NOT NULL,
+  `LabName` varchar(50) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `ProfessorID` int NOT NULL,
+  `StudentCount` int NOT NULL,
+  `Field` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
+  PRIMARY KEY (`LabID`),
+  KEY `ProfessorID` (`ProfessorID`),
+  CONSTRAINT `lab_ibfk_1` FOREIGN KEY (`ProfessorID`) REFERENCES `professor` (`ProfessorID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci
+
+CREATE TABLE `student` (
+  `StudentID` int NOT NULL AUTO_INCREMENT,
+  `StudentName` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `Birthdate` date NOT NULL,
+  `DepartmentID` int NOT NULL,
+  `AdvisorID` int NOT NULL,
+  `Grade` int NOT NULL,
+  `labID` int DEFAULT NULL,
+  PRIMARY KEY (`StudentID`),
+  KEY `DepartmentID` (`DepartmentID`),
+  KEY `AdvisorID` (`AdvisorID`),
+  KEY `studnet_ibfk_3_idx` (`labID`),
+  CONSTRAINT `student_ibfk_1` FOREIGN KEY (`DepartmentID`) REFERENCES `department` (`DepartmentID`),
+  CONSTRAINT `student_ibfk_2` FOREIGN KEY (`AdvisorID`) REFERENCES `professor` (`ProfessorID`),
+  CONSTRAINT `studnet_ibfk_3` FOREIGN KEY (`labID`) REFERENCES `lab` (`LabID`)
+) ENGINE=InnoDB AUTO_INCREMENT=20223531 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci
+
+CREATE TABLE `user` (
+  `userID` varchar(50) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `userName` varchar(45) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `userPW` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `departmentID` int NOT NULL,
+  `authority` varchar(45) COLLATE utf8mb3_unicode_ci NOT NULL,
+  PRIMARY KEY (`userID`),
+  KEY `user_ibfk_1_idx` (`departmentID`),
+  CONSTRAINT `user_ibfk_1` FOREIGN KEY (`departmentID`) REFERENCES `department` (`DepartmentID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci
+
+CREATE TABLE `professor` (
+  `ProfessorID` int NOT NULL,
+  `ProfessorName` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `departmentID` int NOT NULL,
+  `Field` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `Office` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `Lab` varchar(100) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`ProfessorID`),
+  KEY `professor_ibfk_1_idx` (`departmentID`),
+  CONSTRAINT `professor_ibfk_1` FOREIGN KEY (`departmentID`) REFERENCES `department` (`DepartmentID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci

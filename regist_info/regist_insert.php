@@ -5,14 +5,19 @@ $con = mysqli_connect(
     "0210",
     "cse_comu"
 );
+
 $userID = $_POST['userID'];
 $userName = $_POST['userName'];
 $userPW = $_POST['userPW'];
-$department = $_POST['College'];
+$departmentID = $_POST['department'];
+$role = $_POST['role'];
 
 $hashedPW = password_hash($userPW, PASSWORD_DEFAULT);
 
-$sql = "INSERT INTO user (userID, userName, userPW, department) VALUES ('$userID', '$userName', '$hashedPW', '$department')";
+$sql = "
+INSERT INTO user (userID, userName, userPW, departmentID, authority) 
+VALUES ('$userID', '$userName', '$hashedPW', '$departmentID', '$role')
+";
 
 $ret = mysqli_query($con, $sql);
 

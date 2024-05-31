@@ -66,7 +66,7 @@ while ($row = mysqli_fetch_array($ret)) {
             echo "<a href='update_authority.php?userID=".$row['userID']."'>권한수정</a>";
             echo "</td>";
             echo "<td>";
-            echo "<a href='../regist/regiout.php?userID=".$row['userID']."'>유저삭제</a>";
+            echo "<a href='../regist_info/regiout.php?userID=".$row['userID']."'>유저삭제</a>";
             echo "</td>";
         }
     }

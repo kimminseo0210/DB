@@ -36,26 +36,28 @@ if(isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
 } else {
     echo "<p>게스트로 사용 중</p>";
     // 세션이 존재하지 않거나 로그인 상태가 아닌 경우, 로그인 및 회원가입 폼 표시
-    echo '<form action="login/login.php" method="post">';
+    echo '<form action="/login/login.php" method="post">';
     echo '<input type="submit" value="로그인">';
+    echo '</form>';
+    echo '<form action="/regist_info/regist.php" method="post">';
+    echo '<input type="submit" value="회원가입">';
     echo '</form>';
 }
 ?>
 <br><br>
 <h2>학교 정보 찾기</h2>
-<input type="button" value="1)  학과 정보" onclick="window.location.href='select/select.php'">
-<input type="button" value="2)  학생 정보" onclick="window.location.href='student_info/student_info.php'">
-<input type="button" value="3)  강의실 정보" onclick="window.location.href='classroom_info/classroom_info.php'">
-<input type="button" value="4)  연구실 정보" onclick="window.location.href='select/sch/sch.php'">
-<input type="button" value="5)  교수 정보" onclick="window.location.href='select/sch/sch.php'">
+<input type="button" value="1)  학과 정보" onclick="window.location.href='/select/select.php'">
+<input type="button" value="3)  강의실 정보" onclick="window.location.href='/classroom_info/classroom_info.php'">
+<input type="button" value="4)  연구실 정보" onclick="window.location.href='/select/sch/sch.php'">
+<input type="button" value="5)  교수 정보" onclick="window.location.href='/select/sch/sch.php'">
 
 <?php
 if (isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
-    if ($userAuth == 'admin' && $userID == 'admin') {
+    if ($userID == 'admin') {
         echo "<br><br><br><br>";
         echo "<h3>유저 권한 관리</h3>";
-        echo "<input type='button' value='권한 관리 페이지' onclick=\"window.location.href='control_user/control_user.php'\"><br>";
-        echo "<input type='button' value='학생 정보 관리' onclick=\"window.location.href='select/student/student.php'\">";
+        echo "<input type='button' value='권한 관리 페이지' onclick=\"window.location.href='/control_user/control_user.php'\"><br>";
+        echo "<input type='button' value='학생 정보 관리' onclick=\"window.location.href='/student_info/student_info.php'\">";
     }
 }
 ?>
