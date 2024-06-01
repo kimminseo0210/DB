@@ -6,9 +6,13 @@ $con = mysqli_connect(
     "localhost",
     "minseoUser",
     "0210",
-    "cse"
+    "cse_comu"
 );
-$sql = "SELECT * FROM labstbl";
+$sql = "
+SELECT l.LabID, l.LabName, l.ProfessorID, l.Field, p.ProfessorName, 
+       (SELECT COUNT(*) FROM student s WHERE s.LabID = l.LabID) AS StudentCount
+FROM lab l
+LEFT JOIN Professor p ON l.ProfessorID = p.ProfessorID";
 $ret = mysqli_query($con, $sql);
 // 연결 체크
 if ($ret) {
@@ -20,19 +24,36 @@ if ($ret) {
 }
 echo "<h1>연구실 정보 검색 결과</h1>";
 
-// 세션에 loggedIn이 true로 설정되어 있는지 확인하여 관리자로 로그인한 경우에만 수정과 삭제 링크 표시
+// 세션이 존재하고 로그인 상태인 경우
 if(isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
-    // 로그인한 사용자 ID 출력
-    $userID = htmlspecialchars($_SESSION['userID']);
-    $user_con = mysqli_connect("localhost", "minseoUser", "0210", "cse");
-    $user_sql = "SELECT userName, authority FROM membertbl WHERE userID = '$userID'";
-    $user_ret = mysqli_query($user_con, $user_sql);
     // 결과에서 사용자 이름 추출
+    $userID = htmlspecialchars($_SESSION['userID']);
+    $userRole = htmlspecialchars($_SESSION['role']);
+    $user_con = mysqli_connect(
+        "localhost",
+        "minseoUser",
+        "0210",
+        "cse_comu"
+    );
+    if ($userRole === 'admin') {
+        $user_sql = "SELECT userName, authority FROM user WHERE userID = '$userID'";
+    } elseif ($userRole === 'student') {
+        $user_sql = "SELECT studentName AS userName FROM student WHERE StudentID = '$userID'";
+    } elseif ($userRole === 'professor') {
+        $user_sql = "SELECT professorName AS userName FROM professor WHERE ProfessorID = '$userID'";
+    }
+    $user_ret = mysqli_query($user_con, $user_sql);
+    // 결과에서 이름과 권한 추출
     if ($user_ret && mysqli_num_rows($user_ret) == 1) {
         $user_row = mysqli_fetch_assoc($user_ret);
         $userName = htmlspecialchars($user_row['userName']);
-        $userAuth = htmlspecialchars($user_row['authority']);
-        echo "<p>" . $userName . "님으로 로그인됨</p>";
+        if ($userRole === 'professor') {
+            echo "<p>환영합니다, ".$userName." 교수님!</p>";
+        } else if ($userRole === 'student') {
+            echo "<p>환영합니다, ".$userName."님!</p>";
+        } else {
+            echo "<p>환영합니다, ".$userName."님!</p>";
+        }
     } else {
         echo "<p>사용자 정보를 가져오는 데 실패했습니다.</p>";
     }
@@ -41,20 +62,19 @@ if(isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
 }
 echo "<table border='1'>";
 echo "<tr>";
-echo "<th>연구실 번호</th> <th>연구실 이름</th> <th>학과</th> <th>분야</th> <th>담당 교수</th> <th>인원</th>";
-echo "<tr>";
+echo "<th>연구실 번호</th> <th>연구실 이름</th> <th>분야</th> <th>담당 교수</th> <th>인원</th>";
+echo "</tr>";
 while ($row = mysqli_fetch_array($ret)) {
     echo "<tr>";
-    echo "<td>".$row['labsID']."</td>";
-    echo "<td>".$row['labsName']."</td>";
-    echo "<td>".$row['department']."</td>";
-    echo "<td>".$row['field']."</td>";
-    echo "<td>".$row['teacherID']."</td>";
-    echo "<td>".$row['studentNum']."</td>";
+    echo "<td>".$row['LabID']."</td>";
+    echo "<td>".$row['LabName']."</td>";
+    echo "<td>".$row['Field']."</td>";
+    echo "<td>".$row['ProfessorName']."</td>";
+    echo "<td>".$row['StudentCount']."</td>";
     if (isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
-        if ($userAuth == 'true') {
+        if ($userRole == 'admin' || $userRole == 'professor') {
             echo "<td>";
-            echo "<a href='update_labs.php?labsID=".$row['labsID']."'>수정</a>";
+            echo "<a href='update_labs.php?LabID=".$row['LabID']."'>수정</a>";
             echo "</td>";
         }
     }
@@ -62,7 +82,6 @@ while ($row = mysqli_fetch_array($ret)) {
 }
 mysqli_close($con);
 echo "</table>";
-echo "<br> <a href='../select.php'><-- 정보 검색 화면</a>";
 echo "<br> <a href='../../main.php'><-- 메인 화면</a>";
 ?>
 

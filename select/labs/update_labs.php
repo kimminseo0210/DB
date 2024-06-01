@@ -6,14 +6,14 @@ $con = mysqli_connect(
     "localhost",
     "minseoUser",
     "0210",
-    "cse"
+    "cse_comu"
 );
 
 // GET으로 전달된 연구실 ID를 가져옴
-$labsID = $_GET['labsID'];
+$LabID = $_GET['LabID'];
 
 // 연구실 정보 조회 쿼리
-$sql = "SELECT * FROM labstbl WHERE labsID='$labsID'";
+$sql = "SELECT * FROM lab WHERE LabID='$LabID'";
 $ret = mysqli_query($con, $sql);
 
 // 데이터베이스 연결 체크
@@ -26,12 +26,11 @@ if (!$ret) {
 
 // 연구실 정보를 변수에 할당
 $row = mysqli_fetch_array($ret);
-$labsID = $row['labsID'];
-$labsName = $row['labsName'];
-$currentTeacherID = $row['teacherID'];
-$department = $row['department'];
-$field = $row['field'];
-$studentNum = $row['studentNum'];
+$LabID = $row['LabID'];
+$LabName = $row['LabName'];
+$ProfessorID = $row['ProfessorID'];
+$StudentCount = $row['StudentCount'];
+$Field = $row['Field'];
 ?>
 
 <html>
@@ -42,9 +41,9 @@ $studentNum = $row['studentNum'];
 <body>
 <h1>연구실 정보 수정</h1>
 <form method="post" action="update_result_labs.php">
-    연구실 번호 : <input type="text" name="labsID" value="<?php echo $labsID ?>" readonly><br>
-    연구실 이름 : <input type="text" name="labsName" value="<?php echo $labsName ?>" readonly><br>
-    인원 : <input type="number" name="studentNum" max="10" min="1" value="<?php echo $studentNum ?>"><br><br>
+    연구실 번호 : <input type="text" name="labsID" value="<?php echo $LabID ?>" readonly><br>
+    연구실 이름 : <input type="text" name="labsName" value="<?php echo $LabName ?>" readonly><br>
+    인원 : <input type="number" name="studentNum" max="10" min="1" value="<?php echo $StudentCount ?>"><br><br>
     <input type="submit" value="정보 수정">
     <input type="button" value="취소" onclick="window.location.href='labs.php'">
 </form>

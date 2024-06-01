@@ -36,6 +36,21 @@ while ($row = mysqli_fetch_assoc($professor_count_ret)) {
     $professor_counts[$row['departmentID']] = $row['professor_count'];
 }
 
+// 각 학과별 학생 수 조회
+$student_count_sql = "SELECT departmentID, COUNT(*) as student_count FROM student GROUP BY departmentID";
+$student_count_ret = mysqli_query($con, $student_count_sql);
+if ($student_count_ret === false) {
+    echo "student 데이터 검색 실패" . "<br>";
+    echo "실패 원인 : " . mysqli_error($con);
+    exit();
+}
+
+// 학생 수를 저장할 배열
+$student_counts = [];
+while ($row = mysqli_fetch_assoc($student_count_ret)) {
+    $student_counts[$row['departmentID']] = $row['student_count'];
+}
+
 echo "<h1>학과 정보 검색 결과</h1>";
 
 // 세션에 loggedIn이 true로 설정되어 있는지 확인하여 관리자로 로그인한 경우에만 수정과 삭제 링크 표시
@@ -66,27 +81,27 @@ if (isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
 
 echo "<table border='1'>";
 echo "<tr>";
-echo "<th>학과</th> <th>학생</th> <th>교수 수</th> <th>수정/삭제</th>";
+echo "<th>학과 번호</th> <th>학과</th> <th>학생 수</th> <th>교수 수</th>";
+if (isset($userRole) && $userRole === 'admin') {
+    echo " <th>수정/삭제</th>";
+}
 echo "</tr>";
 while ($row = mysqli_fetch_array($ret)) {
     echo "<tr>";
     echo "<td>" . $row['DepartmentID'] . "</td>";
     echo "<td>" . $row['College'] . "</td>";
-    // 해당 학과의 교수 수 출력
     $departmentID = $row['DepartmentID'];
+    $student_count = isset($student_counts[$departmentID]) ? $student_counts[$departmentID] : 0;
+    echo "<td>" . $student_count . "</td>";
+    // 해당 학과의 교수 수 출력
     $professor_count = isset($professor_counts[$departmentID]) ? $professor_counts[$departmentID] : 0;
     echo "<td>" . $professor_count . "</td>";
     // 세션에 loggedIn이 true로 설정되어 있는지 확인하여 관리자로 로그인한 경우에만 수정과 삭제 링크 표시
-    if (isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
-        if ($userRole === 'admin') {
-            echo "<td>";
-            echo "<a href='delete_sch.php?DepartmentID=" . $row['DepartmentID'] . "'>삭제</a>";
-            echo "</td>";
-        } else {
-            echo "<td></td>"; // 빈 셀 추가
-        }
-    } else {
-        echo "<td></td>"; // 빈 셀 추가
+    if (isset($userRole) && $userRole === 'admin') {
+        echo "<td>";
+        echo "<a href='update_sch.php?DepartmentID=" . $row['DepartmentID'] . "'>수정</a> ";
+        echo "<a href='delete_sch.php?DepartmentID=" . $row['DepartmentID'] . "'>삭제</a>";
+        echo "</td>";
     }
     echo "</tr>";
 }
