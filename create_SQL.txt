@@ -1,123 +1,167 @@
-CREATE TABLE `assignment` (
-  `Week` int NOT NULL,
-  `AssignmentName` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `StartDate` date NOT NULL,
-  `EndDate` date NOT NULL,
-  `Content` text COLLATE utf8mb3_unicode_ci NOT NULL,
-  PRIMARY KEY (`Week`)
-);
+-- 데이터베이스 생성
+CREATE DATABASE `cse_comu`;
 
-CREATE TABLE `assignmentcomment` (
-  `Week` int NOT NULL,
-  `CommentDate` date NOT NULL,
-  `CommentTime` time NOT NULL,
-  `StudentName` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
-  KEY `Week` (`Week`),
-  CONSTRAINT `assignmentcomment_ibfk_1` FOREIGN KEY (`Week`) REFERENCES `assignment` (`Week`)
-);
+-- 데이터베이스 사용
+USE `cse_comu`;
+
+-- 권한 설정 --
+CREATE USER 'minseoUser'@'%' IDENTIFIED WITH mysql_native_passwd BY '0210';
+GRANT ALL PRIVILEGES ON * . * TO 'minseouser'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
+-- Step 1: 테이블 생성
 
 CREATE TABLE `department` (
   `DepartmentID` int NOT NULL AUTO_INCREMENT,
-  `College` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `College` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   PRIMARY KEY (`DepartmentID`)
 );
 
 CREATE TABLE `classroom` (
   `ClassroomID` int NOT NULL,
   `ProfessorID` int NOT NULL,
-  `Purpose` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
-  PRIMARY KEY (`ClassroomID`),
-  KEY `ProfessorID` (`ProfessorID`),
-  CONSTRAINT `classroom_ibfk_1` FOREIGN KEY (`ProfessorID`) REFERENCES `professor` (`ProfessorID`)
+  `Purpose` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  PRIMARY KEY (`ClassroomID`)
 );
 
-CREATE TABLE `classroomreservation` (
-  `ClassroomID` int NOT NULL,
-  `ReservationTime` datetime NOT NULL,
-  `StudentID` int NOT NULL,
-  PRIMARY KEY (`ClassroomID`,`ReservationTime`),
-  KEY `StudentID` (`StudentID`),
-  CONSTRAINT `classroomreservation_ibfk_1` FOREIGN KEY (`ClassroomID`) REFERENCES `classroom` (`ClassroomID`),
-  CONSTRAINT `classroomreservation_ibfk_2` FOREIGN KEY (`StudentID`) REFERENCES `student` (`StudentID`)
-);
-
-CREATE TABLE `classroomschedule` (
-  `ClassroomID` int NOT NULL,
-  `Schedule` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
-  PRIMARY KEY (`ClassroomID`,`Schedule`),
-  CONSTRAINT `classroomschedule_ibfk_1` FOREIGN KEY (`ClassroomID`) REFERENCES `classroom` (`ClassroomID`)
-);
-
-CREATE TABLE `deleted_user` (
-  `userID` varchar(50) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `deleted_at` datetime NOT NULL,
-  PRIMARY KEY (`userID`)
+CREATE TABLE `professor` (
+  `ProfessorID` int NOT NULL AUTO_INCREMENT,
+  `ProfessorName` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `departmentID` int NOT NULL,
+  `Field` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `Office` int NOT NULL,
+  `Lab` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `ProfessorPW` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  PRIMARY KEY (`ProfessorID`),
+  KEY `professor_ibfk_1_idx` (`Office`)
 );
 
 CREATE TABLE `lab` (
   `LabID` int NOT NULL,
-  `LabName` varchar(50) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `LabName` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `ProfessorID` int NOT NULL,
   `StudentCount` int NOT NULL,
-  `Field` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `Field` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   PRIMARY KEY (`LabID`),
-  KEY `ProfessorID` (`ProfessorID`),
-  CONSTRAINT `lab_ibfk_1` FOREIGN KEY (`ProfessorID`) REFERENCES `professor` (`ProfessorID`)
+  KEY `ProfessorID` (`ProfessorID`)
 );
 
 CREATE TABLE `student` (
   `StudentID` int NOT NULL AUTO_INCREMENT,
-  `StudentName` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `StudentName` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `Birthdate` date NOT NULL,
   `DepartmentID` int NOT NULL,
   `AdvisorID` int NOT NULL,
   `Grade` int NOT NULL,
   `labID` int DEFAULT NULL,
+  `studentPW` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
   PRIMARY KEY (`StudentID`),
   KEY `DepartmentID` (`DepartmentID`),
-  KEY `AdvisorID` (`AdvisorID`),
   KEY `studnet_ibfk_3_idx` (`labID`),
-  CONSTRAINT `student_ibfk_1` FOREIGN KEY (`DepartmentID`) REFERENCES `department` (`DepartmentID`),
-  CONSTRAINT `student_ibfk_2` FOREIGN KEY (`AdvisorID`) REFERENCES `professor` (`ProfessorID`),
-  CONSTRAINT `studnet_ibfk_3` FOREIGN KEY (`labID`) REFERENCES `lab` (`LabID`)
+  KEY `student_ibfk_2_idx` (`AdvisorID`)
+);
+
+CREATE TABLE `classroomreservation` (
+  `ClassroomID` int NOT NULL,
+  `ReservationTime` datetime NOT NULL,
+  `StudentID` int DEFAULT NULL,
+  `ProfessorID` int DEFAULT NULL,
+  PRIMARY KEY (`ClassroomID`,`ReservationTime`),
+  KEY `StudentID` (`StudentID`),
+  KEY `classroomreservation_ibfk_3_idx` (`ProfessorID`)
+);
+
+CREATE TABLE `deleted_department` (
+  `departmentID` int NOT NULL,
+  `DeletedAt` datetime NOT NULL,
+  `College` varchar(45) COLLATE utf8mb3_unicode_ci NOT NULL,
+  PRIMARY KEY (`departmentID`)
+);
+
+CREATE TABLE `deleted_professor` (
+  `ProfessorID` int NOT NULL,
+  `DeletedAt` datetime NOT NULL,
+  `ProfessorName` varchar(45) COLLATE utf8mb3_unicode_ci NOT NULL,
+  PRIMARY KEY (`ProfessorID`)
+);
+
+CREATE TABLE `deleted_student` (
+  `studentID` int NOT NULL,
+  `DeletedAt` datetime NOT NULL,
+  `studentName` varchar(45) COLLATE utf8mb3_unicode_ci NOT NULL,
+  PRIMARY KEY (`studentID`)
 );
 
 CREATE TABLE `user` (
   `userID` varchar(50) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `userName` varchar(45) COLLATE utf8mb3_unicode_ci NOT NULL,
   `userPW` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `userName` varchar(45) COLLATE utf8mb3_unicode_ci NOT NULL,
   `departmentID` int NOT NULL,
   `authority` varchar(45) COLLATE utf8mb3_unicode_ci NOT NULL,
   PRIMARY KEY (`userID`),
-  KEY `user_ibfk_1_idx` (`departmentID`),
-  CONSTRAINT `user_ibfk_1` FOREIGN KEY (`departmentID`) REFERENCES `department` (`DepartmentID`)
+  KEY `user_ibfk_1_idx` (`departmentID`)
 );
 
-CREATE TABLE `professor` (
-  `ProfessorID` int NOT NULL,
-  `ProfessorName` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `departmentID` int NOT NULL,
-  `Field` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `Office` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `Lab` varchar(100) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`ProfessorID`),
-  KEY `professor_ibfk_1_idx` (`departmentID`),
-  CONSTRAINT `professor_ibfk_1` FOREIGN KEY (`departmentID`) REFERENCES `department` (`DepartmentID`)
-);
+-- Step 2: 외래 키 제약 조건 추가
+
+ALTER TABLE `classroom`
+ADD CONSTRAINT `classroom_ibfk_1` FOREIGN KEY (`ProfessorID`) REFERENCES `professor` (`ProfessorID`);
+
+ALTER TABLE `professor`
+ADD CONSTRAINT `professor_ibfk_1` FOREIGN KEY (`Office`) REFERENCES `classroom` (`ClassroomID`),
+ADD CONSTRAINT `professor_ibfk_2` FOREIGN KEY (`departmentID`) REFERENCES `department` (`DepartmentID`);
+
+ALTER TABLE `lab`
+ADD CONSTRAINT `lab_ibfk_1` FOREIGN KEY (`ProfessorID`) REFERENCES `professor` (`ProfessorID`);
+
+ALTER TABLE `student`
+ADD CONSTRAINT `student_ibfk_1` FOREIGN KEY (`DepartmentID`) REFERENCES `department` (`DepartmentID`),
+ADD CONSTRAINT `student_ibfk_2` FOREIGN KEY (`AdvisorID`) REFERENCES `professor` (`ProfessorID`),
+ADD CONSTRAINT `studnet_ibfk_3` FOREIGN KEY (`labID`) REFERENCES `lab` (`LabID`);
+
+ALTER TABLE `classroomreservation`
+ADD CONSTRAINT `classroomreservation_ibfk_1` FOREIGN KEY (`ClassroomID`) REFERENCES `classroom` (`ClassroomID`),
+ADD CONSTRAINT `classroomreservation_ibfk_2` FOREIGN KEY (`StudentID`) REFERENCES `student` (`StudentID`),
+ADD CONSTRAINT `classroomreservation_ibfk_3` FOREIGN KEY (`ProfessorID`) REFERENCES `professor` (`ProfessorID`);
+
+ALTER TABLE `user`
+ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`departmentID`) REFERENCES `department` (`DepartmentID`);
+
+-- Step 3: 트리거 생성
+
+DELIMITER $$
+
+CREATE DEFINER=`root`@`localhost` TRIGGER `after_student_delete`
+AFTER DELETE ON `student`
+FOR EACH ROW
+BEGIN
+  INSERT INTO `deleted_student` (`studentID`, `studentName`, `DeletedAt`)
+  VALUES (OLD.`StudentID`, OLD.`StudentName`, NOW());
+END$$
+
+CREATE DEFINER=`root`@`localhost` TRIGGER `after_professor_delete`
+AFTER DELETE ON `professor`
+FOR EACH ROW
+BEGIN
+  INSERT INTO `deleted_professor` (`ProfessorID`, `ProfessorName`, `DeletedAt`)
+  VALUES (OLD.`ProfessorID`, OLD.`ProfessorName`, NOW());
+END$$
+
+CREATE DEFINER=`root`@`localhost` TRIGGER `after_department_delete`
+AFTER DELETE ON `department`
+FOR EACH ROW
+BEGIN
+  INSERT INTO `deleted_department` (`departmentID`, `College`, `DeletedAt`)
+  VALUES (OLD.`DepartmentID`, OLD.`College`, NOW());
+END$$
+
+DELIMITER ;
+
+-- Step 4: 데이터 삽입 --
 
 insert data
 학과 데이터 삽입
 INSERT INTO `cse_comu`.`department` (`DepartmentID`, `College`) VALUES ('1', 'CSE');
-INSERT INTO `cse_comu`.`department` (`DepartmentID`, `College`) VALUES ('2', 'IoT');
-
-교수 데이터 삽입
-INSERT INTO `cse_comu`.`professor` (`ProfessorID`, `ProfessorName`, `departmentID`, `Field`, `Office`, `Lab`) VALUES ('1', '강미선', '1', '영상처리', '505', '504');
-INSERT INTO `cse_comu`.`professor` (`ProfessorID`, `ProfessorName`, `departmentID`, `Field`, `Office`, `Lab`) VALUES ('2', '홍민', '1', '그래픽', '509', '508');
-INSERT INTO `cse_comu`.`professor` (`ProfessorID`, `ProfessorName`, `departmentID`, `Field`, `Office`, `Lab`) VALUES ('3', '김석훈', '1', '네트워크', '510', '514');
-INSERT INTO `cse_comu`.`professor` (`ProfessorID`, `ProfessorName`, `departmentID`, `Field`, `Office`, `Lab`) VALUES ('4', '김대영', '1', 'IoT', '514', '511');
-INSERT INTO `cse_comu`.`professor` (`ProfessorID`, `ProfessorName`, `departmentID`, `Field`, `Office`, `Lab`) VALUES ('5', '김수현', '1', '암호 프로토콜', '513', '512');
-INSERT INTO `cse_comu`.`professor` (`ProfessorID`, `ProfessorName`, `departmentID`, `Field`, `Office`, `Lab`) VALUES ('6', '박두순', '1', '프로그래밍', '516', '515');
-INSERT INTO `cse_comu`.`professor` (`ProfessorID`, `ProfessorName`, `departmentID`, `Field`, `Office`, `Lab`) VALUES ('7', '이임영', '1', '암호 프로토콜', '513', '512');
 
 강의실 데이터 삽입
 INSERT INTO `cse_comu`.`classroom` (`ClassroomID`, `ProfessorID`, `Purpose`) VALUES ('501', '5', '이론');
@@ -140,16 +184,25 @@ INSERT INTO `cse_comu`.`classroom` (`ClassroomID`, `ProfessorID`, `Purpose`) VAL
 INSERT INTO `cse_comu`.`classroom` (`ClassroomID`, `ProfessorID`, `Purpose`) VALUES ('520', '5', '실습실');
 INSERT INTO `cse_comu`.`classroom` (`ClassroomID`, `ProfessorID`, `Purpose`) VALUES ('507', '1', '대학원세미나실');
 
+교수 데이터 삽입
+INSERT INTO `cse_comu`.`professor` (`ProfessorID`, `ProfessorName`, `departmentID`, `Field`, `Office`, `Lab`, `ProfessorPW`) VALUES ('1', '강미선', '1', '영상처리', '505', '504', '$10$5fvjnadmNDzmTScgyK7sq.V/B9UhvhU4j8pIw9VLmJCQ3lKxaK5Fa');
+INSERT INTO `cse_comu`.`professor` (`ProfessorID`, `ProfessorName`, `departmentID`, `Field`, `Office`, `Lab`, `ProfessorPW`) VALUES ('2', '홍민', '1', '그래픽', '509', '508', '$2y$10$NwwQXW4eBoAuWWYODHNOZud75DzJKdFeN02VuBe4l0zoXZwDx6H7G');
+INSERT INTO `cse_comu`.`professor` (`ProfessorID`, `ProfessorName`, `departmentID`, `Field`, `Office`, `Lab`, `ProfessorPW`) VALUES ('3', '김석훈', '1', '네트워크', '510', '514', '$2y$10$tDpSnXEr0D/m9t66EN9aT.HzHtKz8UMCFpt8G/ZvYiskubs.w0oRe');
+INSERT INTO `cse_comu`.`professor` (`ProfessorID`, `ProfessorName`, `departmentID`, `Field`, `Office`, `Lab`, `ProfessorPW`) VALUES ('4', '김대영', '1', 'IoT', '514', '511', '$2y$10$nhyYK5vNK.3ot0NIJ3BT4emNYoFwqi5Mko/VsG8uCGWvJOjaQFBCu');
+INSERT INTO `cse_comu`.`professor` (`ProfessorID`, `ProfessorName`, `departmentID`, `Field`, `Office`, `Lab`, `ProfessorPW`) VALUES ('5', '김수현', '1', '암호 프로토콜', '513', '512', '$2y$10$M.tAgqEIDkJut7efuuPzq.kHRbXfp2dcTlo1099n.lDMvCGHyVKm.');
+INSERT INTO `cse_comu`.`professor` (`ProfessorID`, `ProfessorName`, `departmentID`, `Field`, `Office`, `Lab`, `ProfessorPW`) VALUES ('6', '박두순', '1', '프로그래밍', '516', '515', '$2y$10$QKocbPVC2rJddn9NZUMK8eMd1S9xd.WYRcpZjUE69A0lcSr09JN9K');
+INSERT INTO `cse_comu`.`professor` (`ProfessorID`, `ProfessorName`, `departmentID`, `Field`, `Office`, `Lab`, `ProfessorPW`) VALUES ('7', '이임영', '1', '암호 프로토콜', '513', '512', '$2y$10$LAoqwqt2mKr6KgE61QVxaOjavOZtJbGCZG1yRMGFl7dptZFREPPNG');
+
 연구실 데이터 삽입
-INSERT INTO `cse_comu`.`lab` (`LabID`, `LabName`, `ProfessorID`, `StudentCount`, `Field`) VALUES ('504', 'IIP lab', '1', '1', '영상처리');
-INSERT INTO `cse_comu`.`lab` (`LabID`, `LabName`, `ProfessorID`, `StudentCount`, `Field`) VALUES ('508', 'CG lab', '2', '6', '그래픽');
-INSERT INTO `cse_comu`.`lab` (`LabID`, `LabName`, `ProfessorID`, `StudentCount`, `Field`) VALUES ('511', 'INS lab', '4', '6', 'IoT');
-INSERT INTO `cse_comu`.`lab` (`LabID`, `LabName`, `ProfessorID`, `StudentCount`, `Field`) VALUES ('512', 'IS lab', '3', '8', '암호 프로토콜');
-INSERT INTO `cse_comu`.`lab` (`LabID`, `LabName`, `ProfessorID`, `StudentCount`, `Field`) VALUES ('514', 'MCN lab', '5', '5', '네트워크');
-INSERT INTO `cse_comu`.`lab` (`LabID`, `LabName`, `ProfessorID`, `StudentCount`, `Field`) VALUES ('515', 'PL lab', '6', '4', '프로그래밍 언어');
+INSERT INTO `cse_comu`.`lab` (`LabID`, `LabName`, `ProfessorID`, `Field`) VALUES ('504', 'IIP lab', '1', '영상처리');
+INSERT INTO `cse_comu`.`lab` (`LabID`, `LabName`, `ProfessorID`, `Field`) VALUES ('508', 'CG lab', '2', '그래픽');
+INSERT INTO `cse_comu`.`lab` (`LabID`, `LabName`, `ProfessorID`, `Field`) VALUES ('511', 'INS lab', '4', 'IoT');
+INSERT INTO `cse_comu`.`lab` (`LabID`, `LabName`, `ProfessorID`, `Field`) VALUES ('512', 'IS lab', '3', '암호 프로토콜');
+INSERT INTO `cse_comu`.`lab` (`LabID`, `LabName`, `ProfessorID`, `Field`) VALUES ('514', 'MCN lab', '5', '네트워크');
+INSERT INTO `cse_comu`.`lab` (`LabID`, `LabName`, `ProfessorID`, `Field`) VALUES ('515', 'PL lab', '6', '프로그래밍 언어');
 
 학생 데이터 삽입
-INSERT INTO `cse_comu`.`student` (`StudentID`, `StudentName`, `Birthdate`, `DepartmentID`, `AdvisorID`, `Grade`, `labID`) VALUES ('20223530', '김민서', '030210', '1', '5', '3', '512');
+INSERT INTO `cse_comu`.`student` (`StudentID`, `StudentName`, `Birthdate`, `DepartmentID`, `AdvisorID`, `Grade`, `labID`, `studentPW`) VALUES ('20223530', '김민서', '030210', '1', '5', '3', '512', '$2y$10$HyAj6XwX3LaThyBLZ8wlluHBqj7xNzd2YwksY.heo2SCqpOyCaMtu');
 
 유저 데이터 삽입
-INSERT INTO `cse_comu`.`user` (`userID`, `userName`, `userPW`, `departmentID`, `authority`) VALUES ('admin', '관리자', '$2y$10$QDN.Wswkni.nlAtwAuCex.9icg5.4oCpZOX8toFl6UtPKNw73DeSe', '1', 'admin');
+INSERT INTO `cse_comu`.`user` (`userID`, `userPW`, `userName`, `departmentID`, `authority`) VALUES ('cseadmin', '$2y$10$WoogCIT5sCHSvaKd3ABcjO83DJyYzwqYUD5576VJArzHOs90r6RO.', '관리자', '1', 'admin');
