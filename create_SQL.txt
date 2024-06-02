@@ -1,6 +1,5 @@
 -- 데이터베이스 생성
 CREATE DATABASE `cse_comu`;
-
 -- 데이터베이스 사용
 USE `cse_comu`;
 
