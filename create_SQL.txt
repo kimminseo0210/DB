@@ -70,6 +70,7 @@ CREATE TABLE `classroomreservation` (
   KEY `classroomreservation_ibfk_3_idx` (`ProfessorID`)
 );
 
+DROP TABLE IF EXISTS `deleted_department`;
 CREATE TABLE `deleted_department` (
   `departmentID` int NOT NULL,
   `DeletedAt` datetime NOT NULL,
@@ -77,6 +78,7 @@ CREATE TABLE `deleted_department` (
   PRIMARY KEY (`departmentID`)
 );
 
+DROP TABLE IF EXISTS `deleted_professor`;
 CREATE TABLE `deleted_professor` (
   `ProfessorID` int NOT NULL,
   `DeletedAt` datetime NOT NULL,
@@ -84,6 +86,7 @@ CREATE TABLE `deleted_professor` (
   PRIMARY KEY (`ProfessorID`)
 );
 
+DROP TABLE IF EXISTS `deleted_student`;
 CREATE TABLE `deleted_student` (
   `studentID` int NOT NULL,
   `DeletedAt` datetime NOT NULL,
