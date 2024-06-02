@@ -40,7 +40,7 @@ if(isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
             "cse_comu"
     );
     if ($userRole === 'admin') {
-        $user_sql = "SELECT userName, authority FROM user WHERE userID = '$userID'";
+        $user_sql = "SELECT userName FROM user WHERE userID = '$userID'";
     } elseif ($userRole === 'student') {
         $user_sql = "SELECT studentName AS userName FROM student WHERE StudentID = '$userID'";
     } elseif ($userRole === 'professor') {
@@ -89,10 +89,11 @@ echo "</table>";
 // 관리자로 로그인한 경우 "학생 정보 추가" 버튼 표시
 if(isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
     if ($userRole == 'admin') {
-        echo "<br><a href='insert_student.php'>학생 정보 추가</a>";
+        echo "<br><br><input type='button' value='학생 정보 추가' onclick=\"window.location.href='insert_student.php'\">";
     }
 }
-echo "<br> <a href='../../main.php'>메인 페이지</a>";
+echo "<input type='button' value='메인 페이지' onclick=\"window.location.href='../../main.php'\">";
+
 ?>
 
 <html>
