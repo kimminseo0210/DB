@@ -21,7 +21,7 @@ if(isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
             "cse_comu"
     );
     if ($userRole === 'admin') {
-        $user_sql = "SELECT userName, authority FROM user WHERE userID = '$userID'";
+        $user_sql = "SELECT userName FROM user WHERE userID = '$userID'";
     } elseif ($userRole === 'student') {
         $user_sql = "SELECT studentName AS userName FROM student WHERE StudentID = '$userID'";
     } elseif ($userRole === 'professor') {

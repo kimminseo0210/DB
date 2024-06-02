@@ -40,7 +40,6 @@ CREATE TABLE `lab` (
   `LabID` int NOT NULL,
   `LabName` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `ProfessorID` int NOT NULL,
-  `StudentCount` int NOT NULL,
   `Field` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   PRIMARY KEY (`LabID`),
   KEY `ProfessorID` (`ProfessorID`)
@@ -97,7 +96,6 @@ CREATE TABLE `user` (
   `userPW` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
   `userName` varchar(45) COLLATE utf8mb3_unicode_ci NOT NULL,
   `departmentID` int NOT NULL,
-  `authority` varchar(45) COLLATE utf8mb3_unicode_ci NOT NULL,
   PRIMARY KEY (`userID`),
   KEY `user_ibfk_1_idx` (`departmentID`)
 );
