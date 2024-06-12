@@ -1,5 +1,6 @@
 <html>
 <head>
+    <!-- 학과 이름을 적는 곳 -->
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>학과 정보</title>
 </head>

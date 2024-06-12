@@ -25,9 +25,9 @@ if ($ret) {
 }
 echo "<h1>교수 정보 검색 결과</h1>";
 
-// 세션에 loggedIn이 true로 설정되어 있는지 확인하여 관리자로 로그인한 경우에만 수정과 삭제 링크 표시
+// 세션에 loggedIn이 true로 설정되어 있는지 확인
 if(isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
-    // 로그인한 사용자 ID 출력
+    // 로그인한 사용자 ID, 권한 추출
     $userID = htmlspecialchars($_SESSION['userID']);
     $userRole = htmlspecialchars($_SESSION['role']);
     $user_con = mysqli_connect(
@@ -37,17 +37,18 @@ if(isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
             "cse_comu"
     );
     if ($userRole === 'admin') {
-        $user_sql = "SELECT userName FROM user WHERE userID = '$userID'";
+        $user_sql = "SELECT userName FROM user WHERE userID = '$userID'";                               // 권한이 'admin'일 경우
     } elseif ($userRole === 'student') {
-        $user_sql = "SELECT studentName AS userName FROM student WHERE StudentID = '$userID'";
+        $user_sql = "SELECT studentName AS userName FROM student WHERE StudentID = '$userID'";          // 권한이 'student'일 경우
     } elseif ($userRole === 'professor') {
-        $user_sql = "SELECT professorName AS userName FROM professor WHERE ProfessorID = '$userID'";
+        $user_sql = "SELECT professorName AS userName FROM professor WHERE ProfessorID = '$userID'";    // 권한이 'professor'일 경우
     }
     $user_ret = mysqli_query($user_con, $user_sql);
     // 결과에서 이름과 권한 추출
     if ($user_ret && mysqli_num_rows($user_ret) == 1) {
         $user_row = mysqli_fetch_assoc($user_ret);
         $userName = htmlspecialchars($user_row['userName']);
+        // 인삿말
         if ($userRole === 'professor') {
             echo "<p>환영합니다, ".$userName." 교수님!</p>";
         } else if ($userRole === 'student') {
@@ -58,7 +59,7 @@ if(isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
     } else {
         echo "<p>사용자 정보를 가져오는 데 실패했습니다.</p>";
     }
-} else {
+} else {    // 세션이 존재하지 않거나, 로그인이 아닌경우 출력
     echo "<p>게스트로 로그인됨</p>";
 }
 echo "<table border='1'>";
@@ -73,7 +74,7 @@ while ($row = mysqli_fetch_array($ret)) {
     echo "<td>" . $row['ProfessorName']."</td>";
     echo "<td>" . $row['LabName'] . "</td>";
     echo "<td>" . $row['Field']."</td>";
-    // 세션에 loggedIn이 true로 설정되어 있는지 확인하여 관리자로 로그인한 경우에만 수정과 삭제 링크 표시
+    // 세션에 loggedIn이 true로 설정되어 있는지 확인하여 관리자로 로그인한 경우에만 삭제 링크 표시
     if (isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
         if ($userRole == 'admin') {
             echo "<td>";
@@ -84,7 +85,7 @@ while ($row = mysqli_fetch_array($ret)) {
 }
 mysqli_close($con);
 echo "</table>";
-// 세션에 loggedIn이 true로 설정되어 있는지 확인하여 관리자로 로그인한 경우에만 수정과 삭제 링크 표시
+// 세션에 loggedIn이 true로 설정되어 있는지 확인하여 관리자로 로그인한 경우에만 추가 링크 표시
 if (isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
     if ($userRole == 'admin') {
         echo "<br> <a href='insert_teacher.php'><-- 교수 정보 추가</a><br>";

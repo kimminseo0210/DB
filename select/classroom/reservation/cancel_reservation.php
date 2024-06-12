@@ -9,7 +9,6 @@ $con = mysqli_connect(
     "0210",
     "cse_comu"
 );
-
 if (mysqli_connect_errno()) {
     echo "MySQL 연결 실패: " . mysqli_connect_error();
     exit();

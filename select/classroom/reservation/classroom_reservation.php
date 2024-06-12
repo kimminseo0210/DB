@@ -14,7 +14,7 @@ if (mysqli_connect_errno()) {
     echo "MySQL 연결 실패: " . mysqli_connect_error();
     exit();
 }
-
+// 강의실 번호를 받아옴
 $ClassroomID = $_GET['ClassroomID'];
 
 $sql = "
@@ -41,7 +41,7 @@ echo "<h1>강의실 예약</h1>";
 
 // 세션에 loggedIn이 true로 설정되어 있는지 확인
 if (isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
-    // 결과에서 사용자 이름 추출
+    // 결과에서 사용자ID와 궈한 추출
     $userID = htmlspecialchars($_SESSION['userID']);
     $userRole = htmlspecialchars($_SESSION['role']);
     $user_con = mysqli_connect(
@@ -51,14 +51,13 @@ if (isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
         "cse_comu"
     );
     if ($userRole === 'admin') {
-        $user_sql = "SELECT userName FROM user WHERE userID = '$userID'";
+        $user_sql = "SELECT userName FROM user WHERE userID = '$userID'";                               // 권한이 'admin'일 경우
     } elseif ($userRole === 'student') {
-        $user_sql = "SELECT studentName AS userName FROM student WHERE StudentID = '$userID'";
+        $user_sql = "SELECT studentName AS userName FROM student WHERE StudentID = '$userID'";          // 권한이 'student'일 경우
     } elseif ($userRole === 'professor') {
-        $user_sql = "SELECT professorName AS userName FROM professor WHERE ProfessorID = '$userID'";
+        $user_sql = "SELECT professorName AS userName FROM professor WHERE ProfessorID = '$userID'";    // 권한이 'professor'일 경우
     }
     $user_ret = mysqli_query($user_con, $user_sql);
-    // 결과에서 사용자 이름 추출
     if ($user_ret && mysqli_num_rows($user_ret) == 1) {
         $user_row = mysqli_fetch_assoc($user_ret);
         $userName = htmlspecialchars($user_row['userName']);
@@ -79,7 +78,7 @@ if (isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
         $totalRow = mysqli_fetch_assoc($totalReservationTimeRet);
         $totalReservedMinutes = $totalRow['totalMinutes'] ? $totalRow['totalMinutes'] : 0;
     }
-    $maxReservationMinutes = 180; // 3시간 = 180분
+    $maxReservationMinutes = 180; // 최대 예약 가능 시간 :  3시간 = 180분
 }
 echo "<h2>$ClassroomID 예약</h2><br>";
 

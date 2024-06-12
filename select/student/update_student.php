@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 // 데이터베이스 연결
 $con = mysqli_connect(
     "localhost",
@@ -66,6 +65,7 @@ $result_teacher = mysqli_query($con, $sql_teacher);
     <meta http-equiv="content-type" content="text/html"; charset="utf-8">
     <title>학생 정보 수정</title>
     <script>
+        // 지도교수를 선택했을 경우 해당하는 연구실 이름을 실시간으로 불러와서 드롭다운 목록에 추가
         function updateLabs(professorID) {
             if (professorID == "") {
                 document.getElementById("labs").innerHTML = "<option value=''>연구실 없음</option>";

@@ -1,6 +1,11 @@
 <?php
+// 결과페이지로 따로 세션을 받지 않음
 // 데이터베이스 연결
-$con = mysqli_connect("localhost", "minseoUser", "0210", "cse_comu");
+$con = mysqli_connect("localhost",
+    "minseoUser",
+    "0210",
+    "cse_comu"
+);
 if (!$con) {
     die("Connection failed: " . mysqli_connect_error());
 }

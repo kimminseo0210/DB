@@ -30,7 +30,7 @@ echo "<h1>학생 정보 검색 결과</h1>";
 
 // 세션에 loggedIn이 true로 설정되어 있는지 확인하여 관리자로 로그인한 경우에만 수정과 삭제 링크 표시
 if(isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
-    // 로그인한 사용자 ID 출력
+    // 로그인한 사용자 ID, 권한 추출
     $userID = htmlspecialchars($_SESSION['userID']);
     $userRole = htmlspecialchars($_SESSION['role']);
     $user_con = mysqli_connect(
@@ -40,14 +40,13 @@ if(isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
             "cse_comu"
     );
     if ($userRole === 'admin') {
-        $user_sql = "SELECT userName FROM user WHERE userID = '$userID'";
+        $user_sql = "SELECT userName FROM user WHERE userID = '$userID'";                               // 권한이 'admin'일 경우
     } elseif ($userRole === 'student') {
-        $user_sql = "SELECT studentName AS userName FROM student WHERE StudentID = '$userID'";
+        $user_sql = "SELECT studentName AS userName FROM student WHERE StudentID = '$userID'";          // 권한이 'student'일 경우
     } elseif ($userRole === 'professor') {
-        $user_sql = "SELECT professorName AS userName FROM professor WHERE ProfessorID = '$userID'";
+        $user_sql = "SELECT professorName AS userName FROM professor WHERE ProfessorID = '$userID'";    // 권한이 'professor'일 경우
     }
     $user_ret = mysqli_query($user_con, $user_sql);
-    // 결과에서 사용자 이름 추출
     if ($user_ret && mysqli_num_rows($user_ret) == 1) {
         $user_row = mysqli_fetch_assoc($user_ret);
         $userName = htmlspecialchars($user_row['userName']);
@@ -55,7 +54,7 @@ if(isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
     } else {
         echo "<p>사용자 정보를 가져오는 데 실패했습니다.</p>";
     }
-} else {
+} else {        // 로그인이 되지 않았을 경우 출력
     echo "<p>게스트로 로그인됨</p>";
 }
 echo "<table border='1'>";
@@ -70,11 +69,13 @@ while ($row = mysqli_fetch_array($ret)) {
     echo "<td>" . $row['Grade'] . "</td>";
     echo "<td>" . $row['ProfessorName'] . "</td>";
     echo "<td>" . $row['LabName']."</td>"; // 연구실 정보 표시
+    // 로그인을 했고 권한이 관리자 또는 교수인 경우 학생 수정을 표시
     if (isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
         if ($userRole == 'admin'|| $userRole == 'professor') {
             echo "<td>";
             echo "<a href='update_student.php?StudentID=".$row['StudentID']."'>수정</a>";
             echo "</td>";
+            // 권한이 관리자인 경우 삭제 표시
             if ($userRole == 'admin') {
                 echo "<td>";
                 echo "<a href='delete_student.php?StudentID=".$row['StudentID']."'>삭제</a>";

@@ -1,4 +1,5 @@
 <?php
+// 관리자로 로그인을 한 경우에만 들어올수 있으므로 세션을 따로 받지 않음
 // studenttbl 테이블 연결
 $con = mysqli_connect(
     "localhost",
@@ -6,6 +7,7 @@ $con = mysqli_connect(
     "0210",
     "cse_comu"
 );
+// 학생ID를 받아옴
 $studentID = $_GET['StudentID'];
 $sql = "SELECT * FROM student WHERE StudentID='$studentID'";
 $ret = mysqli_query($con, $sql);

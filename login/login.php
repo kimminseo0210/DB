@@ -1,6 +1,7 @@
 <?php
 session_start();
-
+// 세션시작
+// DB 연결
 $con = mysqli_connect(
     "localhost",
     "minseoUser",

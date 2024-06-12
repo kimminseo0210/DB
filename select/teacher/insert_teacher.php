@@ -8,6 +8,7 @@
 <form method="post" action="insert_result_teacher.php">
     학과 :
     <?php
+    // 관리자로 로그인 했을 경우에만 들어올 수 있으므로 세션을 따로 받지 않음
     // 데이터베이스 연결
     $con = mysqli_connect(
         "localhost",

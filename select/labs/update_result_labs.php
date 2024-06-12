@@ -1,12 +1,13 @@
 <?php
+// 결과 페이지로 세션을 따로 추가하지 않음
 // studenttbl 테이블 연결
 $con = mysqli_connect(
     "localhost",
     "minseoUser",
     "0210",
-    "cse"
+    "cse_comu"
 );
-
+// 연구실ID와 학생
 $labsID = $_POST["labsID"];
 $studentNum = $_POST['studentNum'];
 

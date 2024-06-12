@@ -1,4 +1,5 @@
 <?php
+// 관리자로만 들어올수 있으므로 따로 세션을 추가 하지 않음
 // studenttbl 테이블 연결
 $con = mysqli_connect(
     "localhost",
@@ -6,6 +7,7 @@ $con = mysqli_connect(
     "0210",
     "cse_comu"
 );
+// 학과ID를 받아옴
 $DepartmentID = $_GET['DepartmentID'];
 $sql = "SELECT DepartmentID, College FROM department WHERE DepartmentID='$DepartmentID'";
 $ret = mysqli_query($con, $sql);

@@ -26,7 +26,7 @@ echo "<h1>강의실 정보 검색 결과</h1>";
 
 // 세션에 loggedIn이 true로 설정되어 있는지 확인하여 관리자로 로그인한 경우에만 수정과 삭제 링크 표시
 if (isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
-    // 결과에서 사용자 이름 추출
+    // 결과에서 사용자ID와 권한 추출
     $userID = htmlspecialchars($_SESSION['userID']);
     $userRole = htmlspecialchars($_SESSION['role']);
     $user_con = mysqli_connect(
@@ -36,14 +36,13 @@ if (isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
         "cse_comu"
     );
     if ($userRole === 'admin') {
-        $user_sql = "SELECT userName FROM user WHERE userID = '$userID'";
+        $user_sql = "SELECT userName FROM user WHERE userID = '$userID'";                               // 권한이 'admin'일 경우
     } elseif ($userRole === 'student') {
-        $user_sql = "SELECT studentName AS userName FROM student WHERE StudentID = '$userID'";
+        $user_sql = "SELECT studentName AS userName FROM student WHERE StudentID = '$userID'";          // 권한이 'student'일 경우
     } elseif ($userRole === 'professor') {
-        $user_sql = "SELECT professorName AS userName FROM professor WHERE ProfessorID = '$userID'";
+        $user_sql = "SELECT professorName AS userName FROM professor WHERE ProfessorID = '$userID'";    // 권한이 'professor'일 경우
     }
     $user_ret = mysqli_query($user_con, $user_sql);
-    // 결과에서 사용자 이름 추출
     if ($user_ret && mysqli_num_rows($user_ret) == 1) {
         $user_row = mysqli_fetch_assoc($user_ret);
         $userName = htmlspecialchars($user_row['userName']);
@@ -58,6 +57,7 @@ echo "<h3>강의실 예약은 로그인 이후 사용가능합니다</h3>";
 echo "<table border='1'>";
 echo "<tr>";
 echo "<th>강의실 번호</th> <th>강의실 종류</th> <th>담당 교수</th>";
+// 로그인이 되었고 권한이 관리자가 아닌경우에만 강의실 예약 표시
 if (isset($userRole) && $userRole !== 'admin') {
     echo "<th>강의실 예약</th>";
 }

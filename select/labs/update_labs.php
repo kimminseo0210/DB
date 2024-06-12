@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 // 데이터베이스 연결
 $con = mysqli_connect(
     "localhost",
@@ -29,7 +28,6 @@ $row = mysqli_fetch_array($ret);
 $LabID = $row['LabID'];
 $LabName = $row['LabName'];
 $ProfessorID = $row['ProfessorID'];
-$StudentCount = $row['StudentCount'];
 $Field = $row['Field'];
 ?>
 
@@ -43,7 +41,6 @@ $Field = $row['Field'];
 <form method="post" action="update_result_labs.php">
     연구실 번호 : <input type="text" name="labsID" value="<?php echo $LabID ?>" readonly><br>
     연구실 이름 : <input type="text" name="labsName" value="<?php echo $LabName ?>" readonly><br>
-    인원 : <input type="number" name="studentNum" max="10" min="1" value="<?php echo $StudentCount ?>"><br><br>
     <input type="submit" value="정보 수정">
     <input type="button" value="취소" onclick="window.location.href='labs.php'">
 </form>

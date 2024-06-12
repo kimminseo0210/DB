@@ -1,4 +1,5 @@
 <?php
+// 결과 페이지로 따로 세션을 받지 않음
 // studenttbl 테이블 연결
 $con = mysqli_connect(
     "localhost",
@@ -6,6 +7,7 @@ $con = mysqli_connect(
     "0210",
     "cse_comu"
 );
+// 학생ID를 받아옴
 $studentID = $_POST['studentID'];
 
 $sql = "DELETE FROM student WHERE StudentID='$studentID'";

@@ -1,4 +1,5 @@
 <?php
+// 결과 페이지로 따로 세션을 받지 않음
 // 데이터베이스 연결
 $con = mysqli_connect(
     "localhost",
@@ -6,7 +7,7 @@ $con = mysqli_connect(
     "0210",
     "cse_comu"
 );
-
+// 학과ID를 받아옴
 $DepartmentID = $_POST['DepartmentID'];
 
 // 교수 정보 확인
@@ -17,7 +18,7 @@ $result_check_professor = mysqli_query($con, $sql_check_professor);
 $sql_check_student = "SELECT * FROM student WHERE DepartmentID='$DepartmentID'";
 $result_check_student = mysqli_query($con, $sql_check_student);
 
-// 참조되는 테이블이 있는지 확인
+// 학생, 교수테이블에서 참조되는 정보가 있는지 확인 후 있다면 테이블로 출력
 if (mysqli_num_rows($result_check_professor) > 0 || mysqli_num_rows($result_check_student) > 0) {
     echo "<h1>학과 정보를 삭제할 수 없습니다.</h1>";
     echo "<h2>학과 정보 삭제 전 다른 테이블을 먼저 변경/삭제 해주세요</h2>";

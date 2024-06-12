@@ -10,9 +10,10 @@ $con = mysqli_connect(
 );
 $sql = "
 SELECT l.LabID, l.LabName, l.ProfessorID, l.Field, p.ProfessorName, 
-       (SELECT COUNT(*) FROM student s WHERE s.LabID = l.LabID) AS StudentCount
+(SELECT COUNT(*) FROM student s WHERE s.LabID = l.LabID) AS StudentCount
 FROM lab l
-LEFT JOIN Professor p ON l.ProfessorID = p.ProfessorID";
+LEFT JOIN Professor p ON l.ProfessorID = p.ProfessorID";                    // left join으로 교수ID에 해당하는 이름을 가져옴
+                                                                            // StudentCount로 연구실에 속한 학생의 수를 받음
 $ret = mysqli_query($con, $sql);
 // 연결 체크
 if ($ret) {
@@ -26,7 +27,7 @@ echo "<h1>연구실 정보 검색 결과</h1>";
 
 // 세션이 존재하고 로그인 상태인 경우
 if(isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
-    // 결과에서 사용자 이름 추출
+    // 결과에서 사용자ID, 권한 추출
     $userID = htmlspecialchars($_SESSION['userID']);
     $userRole = htmlspecialchars($_SESSION['role']);
     $user_con = mysqli_connect(
@@ -36,11 +37,11 @@ if(isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
         "cse_comu"
     );
     if ($userRole === 'admin') {
-        $user_sql = "SELECT userName FROM user WHERE userID = '$userID'";
+        $user_sql = "SELECT userName FROM user WHERE userID = '$userID'";                               // 권한이 'admin'일 경우
     } elseif ($userRole === 'student') {
-        $user_sql = "SELECT studentName AS userName FROM student WHERE StudentID = '$userID'";
+        $user_sql = "SELECT studentName AS userName FROM student WHERE StudentID = '$userID'";          // 권한이 'student'일 경우
     } elseif ($userRole === 'professor') {
-        $user_sql = "SELECT professorName AS userName FROM professor WHERE ProfessorID = '$userID'";
+        $user_sql = "SELECT professorName AS userName FROM professor WHERE ProfessorID = '$userID'";    // 권한이 'professor'일 경우
     }
     $user_ret = mysqli_query($user_con, $user_sql);
     // 결과에서 이름과 권한 추출
@@ -71,6 +72,7 @@ while ($row = mysqli_fetch_array($ret)) {
     echo "<td>".$row['Field']."</td>";
     echo "<td>".$row['ProfessorName']."</td>";
     echo "<td>".$row['StudentCount']."</td>";
+    // 로그인이 되어있고 권한이 관리자이거나 교수인 경우 수정 표시
     if (isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
         if ($userRole == 'admin' || $userRole == 'professor') {
             echo "<td>";

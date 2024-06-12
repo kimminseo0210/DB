@@ -1,4 +1,5 @@
 <?php
+// 관리자로 로그인을 한 경우에만 들어올 수 있으므로 따로 세션을 받지 않음
 // 데이터베이스 연결
 $con = mysqli_connect("localhost", "minseoUser", "0210", "cse_comu");
 if (!$con) {
@@ -29,6 +30,7 @@ if (isset($_GET['ProfessorID'])) {
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>학생 정보</title>
     <script>
+        // 지도교수를 선택했을 경우 실시간으로 지도교수에 해당하는 연구실을 불러와서 드롭다운으로 표시
         function updateLabs(professorID) {
             if (professorID == "") {
                 document.getElementById("labs").innerHTML = "<option value=''>연구실 없음</option>";

@@ -55,19 +55,18 @@ echo "<h1>학과 정보 검색 결과</h1>";
 
 // 세션에 loggedIn이 true로 설정되어 있는지 확인하여 관리자로 로그인한 경우에만 수정과 삭제 링크 표시
 if (isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
-    // 로그인한 사용자 ID 출력
+    // 로그인한 사용자ID, 권한 추출
     $userID = htmlspecialchars($_SESSION['userID']);
     $userRole = htmlspecialchars($_SESSION['role']);
 
     if ($userRole === 'admin') {
-        $user_sql = "SELECT userName FROM user WHERE userID = '$userID'";
+        $user_sql = "SELECT userName FROM user WHERE userID = '$userID'";                               // 권한이 'admin'일 경우
     } elseif ($userRole === 'student') {
-        $user_sql = "SELECT studentName AS userName FROM student WHERE StudentID = '$userID'";
+        $user_sql = "SELECT studentName AS userName FROM student WHERE StudentID = '$userID'";          // 권한이 'student'일 경우
     } elseif ($userRole === 'professor') {
-        $user_sql = "SELECT professorName AS userName FROM professor WHERE ProfessorID = '$userID'";
+        $user_sql = "SELECT professorName AS userName FROM professor WHERE ProfessorID = '$userID'";    // 권한이 'professor'일 경우
     }
     $user_ret = mysqli_query($con, $user_sql);
-    // 결과에서 사용자 이름 추출
     if ($user_ret && mysqli_num_rows($user_ret) == 1) {
         $user_row = mysqli_fetch_assoc($user_ret);
         $userName = htmlspecialchars($user_row['userName']);
@@ -96,7 +95,7 @@ while ($row = mysqli_fetch_array($ret)) {
     // 해당 학과의 교수 수 출력
     $professor_count = isset($professor_counts[$departmentID]) ? $professor_counts[$departmentID] : 0;
     echo "<td>" . $professor_count . "</td>";
-    // 세션에 loggedIn이 true로 설정되어 있는지 확인하여 관리자로 로그인한 경우에만 수정과 삭제 링크 표시
+    // 세션에 loggedIn이 true로 설정되어 있는지 확인하고 관리자로 로그인한 경우에만 수정과 삭제 링크 표시
     if (isset($userRole) && $userRole === 'admin') {
         echo "<td>";
         echo "<a href='update_sch.php?DepartmentID=" . $row['DepartmentID'] . "'>수정</a> ";
